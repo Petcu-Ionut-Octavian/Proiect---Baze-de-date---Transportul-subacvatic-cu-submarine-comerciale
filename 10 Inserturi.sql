@@ -170,3 +170,54 @@ VALUES (62, 201, 52, 2, 'A22');
 
 INSERT INTO Itinerary_Segment (segment_id, itinerary_id, dive_id, segment_order, seat_number)
 VALUES (63, 201, 53, 3, 'A23');
+
+
+-- Submarin de același tip (folosim type_id = 1)
+INSERT INTO Route VALUES (100, 1, 1, 2, 10, 50);
+INSERT INTO Route VALUES (101, 1, 2, 3, 12, 60);
+
+INSERT INTO Scheduled_Dive VALUES (100, 100, SYSTIMESTAMP, SYSTIMESTAMP + INTERVAL '1' HOUR, 20, 5);
+INSERT INTO Scheduled_Dive VALUES (101, 101, SYSTIMESTAMP, SYSTIMESTAMP + INTERVAL '2' HOUR, 20, 5);
+
+INSERT INTO Itinerary VALUES (300, 1, SYSTIMESTAMP, 999); -- foarte scump
+INSERT INTO Itinerary VALUES (301, 1, SYSTIMESTAMP, 120); -- ieftin
+
+INSERT INTO Itinerary_Segment VALUES (3001, 300, 100, 1, 'Z1');
+INSERT INTO Itinerary_Segment VALUES (3002, 300, 101, 2, 'Z2');
+
+INSERT INTO Itinerary_Segment VALUES (3011, 301, 100, 1, 'Z3');
+
+
+
+
+INSERT INTO Route VALUES (200, 1, 1, 2, 10, 50);
+
+INSERT INTO Scheduled_Dive VALUES (2001, 200, SYSTIMESTAMP, SYSTIMESTAMP + INTERVAL '1' HOUR, 10, 3);
+INSERT INTO Scheduled_Dive VALUES (2002, 200, SYSTIMESTAMP, SYSTIMESTAMP + INTERVAL '2' HOUR, 10, 3);
+INSERT INTO Scheduled_Dive VALUES (2003, 200, SYSTIMESTAMP, SYSTIMESTAMP + INTERVAL '3' HOUR, 10, 3);
+INSERT INTO Scheduled_Dive VALUES (2004, 200, SYSTIMESTAMP, SYSTIMESTAMP + INTERVAL '4' HOUR, 10, 3);
+
+
+
+-- Stație nouă în regiunea 'Atlantic'
+INSERT INTO Station VALUES (500, 'HighPricePort', 'Atlantic', 100);
+
+-- Rută scumpă
+INSERT INTO Route VALUES (500, 1, 500, 2, 10, 999);
+
+-- Scufundare scumpă
+INSERT INTO Scheduled_Dive VALUES (500, 500, SYSTIMESTAMP, SYSTIMESTAMP + INTERVAL '1' HOUR, 10, 5);
+
+-- Itinerariu scump
+INSERT INTO Itinerary VALUES (500, 1, SYSTIMESTAMP, 2000);
+
+INSERT INTO Itinerary_Segment VALUES (5001, 500, 500, 1, 'VIP1');
+
+
+INSERT INTO Crew_Member VALUES (500, 'Ion', 'FaraRol', 'Basic', 1);
+
+
+INSERT INTO Itinerary VALUES (600, 1, ADD_MONTHS(SYSTIMESTAMP, -2), 123);
+
+
+COMMIT;

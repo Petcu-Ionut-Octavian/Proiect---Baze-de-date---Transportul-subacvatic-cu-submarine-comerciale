@@ -39,8 +39,8 @@ WHERE p.passenger_id IN (
     SELECT i.passenger_id
     FROM Itinerary i
     WHERE i.passenger_id = p.passenger_id
-      AND i.created_at < (
-          SELECT AVG(i2.created_at)
+      AND TO_NUMBER(TO_CHAR(i.created_at, 'YYYYMMDDHH24MISS')) < (
+          SELECT AVG(TO_NUMBER(TO_CHAR(i2.created_at, 'YYYYMMDDHH24MISS')))
           FROM Itinerary i2
           WHERE i2.passenger_id = p.passenger_id
       )
