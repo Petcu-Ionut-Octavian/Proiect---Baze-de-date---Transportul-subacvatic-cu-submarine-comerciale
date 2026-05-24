@@ -104,7 +104,7 @@ CREATE TABLE Internship (
     passenger_id   NUMBER NOT NULL,
     crew_id        NUMBER NOT NULL,
     dive_id        NUMBER NOT NULL,
-    training_level VARCHAR2(100) NOT NULL,
+    training_level VARCHAR2(100) CHECK (training_level IN ('Beginner', 'Intermediate', 'Advanced')),
     feedback       NUMBER CHECK (feedback BETWEEN 1 AND 10),
     PRIMARY KEY (passenger_id, crew_id, dive_id),
     FOREIGN KEY (passenger_id) REFERENCES Passenger(passenger_id),
