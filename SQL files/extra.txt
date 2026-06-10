@@ -1,0 +1,152 @@
+===========================
+FIRMĂ DE CONTABILITATE
+===========================
+
+1. DESIGN
+
+A) Notarea atributului `email_contact`:
+   - Ovalul dublu indică un atribut compus.
+   - Se diferențiază de un atribut simplu (oval simplu) prin faptul că poate fi descompus logic în sub‑atribute (ex. `nume_utilizator`, `domeniu`).
+
+B) Diagrama conceptuală (tabele, chei primare și externe):
+
+   CLIENTI (id_client PK, email_contact)
+   ANGAJATI (id_angajat PK, nume, prenume, functie)
+   DECLARATII_FISCALE (cod_declaratie PK, denumire_tip)
+   RESPONSABILITATI (id_angajat FK → ANGAJATI, cod_declaratie FK → DECLARATII_FISCALE)
+
+   Relații:
+   - CLIENTI are atribut compus `email_contact`.
+   - RESPONSABILITATI leagă angajații de tipurile de declarații.
+
+
+2. SQL
+
+-- Lista tuturor combinațiilor posibile dintre angajați și tipurile de declarații fiscale
+-- pentru alocarea responsabilităților de depunere.
+
+SELECT 
+    a.nume,
+    a.prenume,
+    a.functie,
+    d.cod_declaratie,
+    d.denumire_tip
+FROM Angajati a
+CROSS JOIN Declaratii_Fiscale d
+ORDER BY a.nume, d.cod_declaratie;
+
+-- Explicație:
+-- CROSS JOIN generează produsul cartezian între cele două tabele.
+-- Rezultatul conține toate combinațiile posibile.
+-- ORDER BY ordonează după numele angajatului și codul declarației.
+
+
+
+
+
+
+
+WITH A AS (
+    SELECT a.*, ROW_NUMBER() OVER (ORDER BY id_angajat) AS rn
+    FROM Angajati a
+),
+D AS (
+    SELECT d.*, ROW_NUMBER() OVER (ORDER BY cod_declaratie) AS rn
+    FROM Declaratii_Fiscale d
+)
+SELECT 
+    A.id_angajat,
+    A.nume,
+    D.cod_declaratie,
+    D.denumire_tip
+FROM A
+JOIN D 
+    ON MOD(A.rn - 1, (SELECT COUNT(*) FROM D)) + 1 = D.rn;
+
+
+
+
+
+
+
+
+
+
+
+
+===========================
+FIRMĂ DE TESTARE — DESIGN
+===========================
+
+1. DESIGN
+
+A) Implementarea relației ternare „sustinere” dintre UTILIZATOR, TEST_EVALUARE și INSCRIERE:
+
+Tabele rezultate:
+
+UTILIZATOR (
+    id_utilizator PK,
+    nume,
+    prenume,
+    email
+)
+
+TEST_EVALUARE (
+    id_test PK,
+    denumire,
+    categorie,
+    nr_intrebari
+)
+
+INSCRIERE (
+    id_inscriere PK,
+    data_inscriere,
+    id_utilizator FK → UTILIZATOR(id_utilizator)
+)
+
+SUSTINERE (
+    id_utilizator FK → UTILIZATOR(id_utilizator),
+    id_test FK → TEST_EVALUARE(id_test),
+    id_inscriere FK → INSCRIERE(id_inscriere),
+    data_sustinere,
+    scor_obtinut,
+    PRIMARY KEY (id_utilizator, id_test, id_inscriere)
+)
+
+Explicație:
+- Relația ternară „sustinere” leagă simultan un utilizator, un test și o înscriere.
+- Cheia primară este compusă din cele trei chei externe.
+- Fiecare combinație (utilizator, test, înscriere) apare o singură dată.
+
+B) Problemă de proiectare în tabela RASPUNS_STUDENT:
+   - Problema: redundanță sau lipsă de normalizare (ex. stocarea textului întrebării și a răspunsului în aceeași tabelă).
+   - Îmbunătățire: separarea în două tabele:
+        INTREBARE (id_intrebare PK, text_intrebare, id_test FK)
+        RASPUNS_STUDENT (id_raspuns PK, id_intrebare FK, id_utilizator FK, raspuns_dat, corect BOOLEAN)
+
+   Astfel se elimină redundanța și se respectă FN3 (dependențe funcționale corecte).
+
+
+===========================
+2. SQL
+===========================
+
+-- Afișați pentru fiecare curs din categoria "Data Science"
+-- numărul total de întrebări înregistrate în testele asociate.
+
+SELECT 
+    c.denumire_curs,
+    COUNT(q.id_intrebare) AS total_intrebari
+FROM Curs c
+JOIN Test_Evaluare t ON c.id_curs = t.id_curs
+JOIN Intrebare q ON t.id_test = q.id_test
+WHERE c.categorie = 'Data Science'
+GROUP BY c.denumire_curs
+ORDER BY total_intrebari DESC;
+
+-- Explicație:
+-- Se numără întrebările din testele asociate fiecărui curs Data Science.
+-- GROUP BY grupează pe curs, COUNT calculează totalul.
+-- ORDER BY ordonează descrescător după numărul de întrebări.
+
+

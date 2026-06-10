@@ -1,3 +1,14 @@
+SELECT P.PASSENGER_ID, COUNT(ITINERARY_ID)
+FROM ITINERARY I
+JOIN PASSENGER P ON (I.PASSENGER_ID = P.PASSENGER_ID)
+GROUP BY P.PASSENGER_ID;
+
+
+
+
+
+
+
 /* ============================================================
    CEREREA 1
    - Subcerere sincronizată (corelată) cu 3+ tabele

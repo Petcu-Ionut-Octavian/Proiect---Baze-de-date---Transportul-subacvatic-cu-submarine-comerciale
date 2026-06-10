@@ -94,7 +94,7 @@ CREATE TABLE Medic (
 CREATE TABLE Dive_Crew (
     dive_id  NUMBER NOT NULL,
     crew_id  NUMBER NOT NULL,
-    duty     VARCHAR2(100) NOT NULL,
+    duty     VARCHAR2(100) CHECK (duty IN ('Pilot', 'Asist', 'Tech', 'Medic', 'Support', 'Observer')) NOT NULL,
     PRIMARY KEY (dive_id, crew_id),
     FOREIGN KEY (dive_id) REFERENCES Scheduled_Dive(dive_id),
     FOREIGN KEY (crew_id) REFERENCES Crew_Member(crew_id)

@@ -235,3 +235,6 @@ SELECT p.id_proba, p.descriere, c.denumire
 FROM PROBA p
 JOIN COMPETITIE c ON p.id_competitie = c.id_competitie
 WHERE p.id_proba IN (SELECT id_proba FROM multi);
+
+
+
